@@ -154,9 +154,7 @@ Valid assay types:
 For the combination optimizer, provide a sample-level H5AD manifest:
 
     dataset_id,dataset_name,sample_id,h5ad_path
-    SC001,2018_Shih,GSM3348308,/server/path/to/sample_GSM3348308/cancell_submtx_select.h5ad
-    SC001,2018_Shih,GSM3348309,/server/path/to/sample_GSM3348309/cancell_submtx_select.h5ad
-    SC002,2020_Geistlinger,GSM4675273,/server/path/to/sample_GSM4675273/cancell_submtx_select.h5ad
+    sample,year_author,dataset_name,/server/path/to/sample_dataset_id/file.h5ad
 
 Each row represents one preprocessing-passed H5AD sample file.
 
@@ -170,9 +168,9 @@ If you have a text file containing one H5AD path per line, save it as:
 
 Example content:
 
-    /data/project/dataset_1/sample_A/cancell_submtx_select.h5ad
-    /data/project/dataset_1/sample_B/cancell_submtx_select.h5ad
-    /data/project/dataset_2/sample_C/cancell_submtx_select.h5ad
+    /data/project/dataset_1/sample_A/file.h5ad
+    /data/project/dataset_1/sample_B/file.h5ad
+    /data/project/dataset_2/sample_C/file.h5ad
 
 Then run:
 
@@ -265,19 +263,3 @@ The exact combination optimizer reads H5AD files to extract:
 - adata.n_obs
 
 For large datasets or hundreds of H5AD files, this step can be slow. In future versions, a cache-building script can be added to precompute dataset-level gene sets and cell counts once, then reuse them during dashboard sessions.
-
-## Roadmap
-
-Planned improvements:
-
-- SQLite-backed dataset registry
-- Cached H5AD metadata extraction
-- QC report parser for HTML reports
-- Spatial transcriptomics-specific sample tracking
-- Exportable combination reports
-- Optional FastAPI backend
-- Docker deployment
-
-## CV Bullet
-
-Developed a Streamlit-based omics dataset curation and lab analysis tracker with standardized CSV input templates, server-compatible H5AD manifest handling, exact gene-overlap based dataset combination ranking, and QC/analysis metadata visualization.
