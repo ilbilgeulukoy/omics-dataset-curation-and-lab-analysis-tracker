@@ -1,0 +1,21 @@
+sample_id,patient_id,tissue_type,experiment_type,assay_type,status,responsible_person,date_received,deadline,qc_status,priority,data_path,analysis_output_path,notes
+SAMP001,P001,Tumor,Transcriptomics,bulk RNA-seq,FASTQ received,Alice Martin,2026-05-20,2026-06-10,pending,high,/data/fastq/SAMP001,/results/SAMP001,Waiting for QC
+SAMP002,P002,Blood,Single-cell profiling,scRNA-seq,QC done,Mehmet Kaya,2026-05-18,2026-06-08,pass,medium,/data/fastq/SAMP002,/results/SAMP002,Ready for analysis
+SAMP003,D001,Brain,Spatial transcriptomics,spatial,analysis running,Claire Dubois,2026-05-15,2026-06-03,pass,high,/data/fastq/SAMP003,/results/SAMP003,Seurat pipeline running
+SAMP004,P003,Lung,Gene expression,qPCR,completed,Alice Martin,2026-05-10,2026-05-30,pass,low,/data/qPCR/SAMP004,/results/SAMP004,Report generated
+SAMP005,P004,Skin,Proteomics,proteomics,failed,Jonas Weber,2026-05-12,2026-06-01,fail,urgent,/data/proteomics/SAMP005,/results/SAMP005,Instrument issue
+SAMP006,P005,Blood,Transcriptomics,bulk RNA-seq,received,Claire Dubois,2026-06-01,2026-06-20,pending,medium,/data/fastq/SAMP006,/results/SAMP006,New sample
+SAMP007,D002,Liver,Single-cell profiling,scRNA-seq,library prepared,Mehmet Kaya,2026-05-25,2026-06-12,pending,high,/data/fastq/SAMP007,/results/SAMP007,Library prep completed
+SAMP008,P006,Tumor,Spatial transcriptomics,spatial,sequenced,Alice Martin,2026-05-22,2026-06-15,pending,high,/data/fastq/SAMP008,/results/SAMP008,Sequencing completed
+SAMP009,P007,Kidney,Transcriptomics,bulk RNA-seq,QC done,Jonas Weber,2026-05-19,2026-06-05,warning,medium,/data/fastq/SAMP009,/results/SAMP009,Low mapping rate
+SAMP010,D003,Heart,Proteomics,proteomics,completed,Claire Dubois,2026-05-05,2026-05-28,pass,low,/data/proteomics/SAMP010,/results/SAMP010,Completed successfully
+SAMP011,P008,Blood,Single-cell profiling,scRNA-seq,FASTQ received,Mehmet Kaya,2026-06-02,2026-06-18,pending,urgent,/data/fastq/SAMP011,/results/SAMP011,Priority patient cohort
+SAMP012,P009,Colon,Transcriptomics,bulk RNA-seq,analysis running,Alice Martin,2026-05-17,2026-06-06,pass,high,/data/fastq/SAMP012,/results/SAMP012,Differential expression running
+SAMP013,D004,Brain,Spatial transcriptomics,spatial,completed,Claire Dubois,2026-05-09,2026-05-29,pass,medium,/data/fastq/SAMP013,/results/SAMP013,Spatial clustering done
+SAMP014,P010,Skin,Gene expression,qPCR,extracted,Jonas Weber,2026-06-03,2026-06-22,pending,low,/data/qPCR/SAMP014,/results/SAMP014,RNA extraction done
+SAMP015,P011,Lung,Transcriptomics,bulk RNA-seq,failed,Mehmet Kaya,2026-05-14,2026-06-04,fail,urgent,/data/fastq/SAMP015,/results/SAMP015,QC failed due to low RNA integrity
+SAMP016,D005,Liver,Single-cell profiling,scRNA-seq,sequenced,Alice Martin,2026-05-27,2026-06-14,pending,high,/data/fastq/SAMP016,/results/SAMP016,Awaiting FASTQ delivery
+SAMP017,P012,Tumor,Proteomics,proteomics,QC done,Claire Dubois,2026-05-21,2026-06-11,pass,medium,/data/proteomics/SAMP017,/results/SAMP017,Protein quantification QC passed
+SAMP018,P013,Blood,Transcriptomics,bulk RNA-seq,completed,Jonas Weber,2026-05-06,2026-05-27,pass,low,/data/fastq/SAMP018,/results/SAMP018,Final report exported
+SAMP019,D006,Kidney,Spatial transcriptomics,spatial,received,Mehmet Kaya,2026-06-04,2026-06-25,pending,medium,/data/fastq/SAMP019,/results/SAMP019,Fresh tissue received
+SAMP020,P014,Colon,Single-cell profiling,scRNA-seq,library prepared,Alice Martin,2026-05-28,2026-06-16,pending,high,/data/fastq/SAMP020,/results/SAMP020,10x library prepared

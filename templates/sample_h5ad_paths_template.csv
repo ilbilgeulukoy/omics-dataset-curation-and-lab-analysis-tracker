@@ -1,0 +1,3 @@
+dataset_id,dataset_name,sample_id,h5ad_path
+SC001,example_dataset,SAMPLE001,path/to/preprocessed/sample001.h5ad
+SC001,example_dataset,SAMPLE002,path/to/preprocessed/sample002.h5ad

@@ -1,0 +1,3 @@
+dataset_id,dataset_name,assay_type,disease_area,species,platform,n_patients,n_samples,n_cells_or_spots,n_genes,data_level,data_access,verified,include_for_analysis,primary_data_path,metadata_path,qc_report_path,notes
+DS001,example_scRNA_dataset,scRNA-seq,ovarian cancer,human,10x Genomics,,,,,h5ad,public,yes,yes,path/to/dataset.h5ad,path/to/sample_metadata.csv,path/to/qc_report.html,example row
+SP001,example_spatial_dataset,spatial,ovarian cancer,human,10x Visium,,,,,spatial_folder,local_only,yes,yes,path/to/spatial_folder,path/to/spatial_metadata.csv,path/to/spatial_qc_report.html,example row

@@ -1,0 +1,3 @@
+sample_id,dataset_id,patient_id,donor_id,tissue,condition,sample_type,assay_type,batch,slide_id,capture_area,timepoint,treatment,notes
+S001,DS001,P001,D001,tumor,disease,tumor biopsy,scRNA-seq,batch_1,,,baseline,untreated,example scRNA-seq sample
+SP_S001,SP001,P001,D001,ovary tumor,disease,tissue section,spatial,batch_1,slide_1,A1,baseline,untreated,example spatial sample

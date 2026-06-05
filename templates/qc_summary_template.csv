@@ -1,0 +1,3 @@
+dataset_id,sample_id,qc_level,cells_or_spots_before_qc,cells_or_spots_after_qc,qc_retention_rate,n_genes_detected,mito_threshold,doublet_rate,cancer_cells_detected,qc_status,report_path,notes
+DS001,S001,sample,1000,850,0.85,18000,15,0.05,300,pass,path/to/qc_report.html,example scRNA-seq QC row
+SP001,SP_S001,sample,5000,4700,0.94,17000,,0.02,,pass,path/to/spatial_qc_report.html,example spatial QC row
