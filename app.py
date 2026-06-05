@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from pathlib import Path
 
 from src.schema import REQUIRED_COLUMNS, RECOMMENDED_COLUMNS, ASSAY_SPECIFIC_COLUMNS, VALID_ASSAY_TYPES
 from src.validation import validate_dataset_schema, add_path_availability_flags
@@ -17,7 +18,13 @@ st.subheader("Dataset curation, QC tracking and integration planning dashboard")
 
 @st.cache_data
 def load_dataset_summary():
-    return pd.read_csv("data/mock_datasets.csv")
+    user_dataset_path = Path("data/datasets.csv")
+    mock_dataset_path = Path("data/mock_datasets.csv")
+
+    if user_dataset_path.exists():
+        return pd.read_csv(user_dataset_path)
+
+    return pd.read_csv(mock_dataset_path)
 
 df = load_dataset_summary()
 
@@ -347,37 +354,64 @@ with tab_schema:
             st.dataframe(pd.DataFrame({"optional_column": columns}), use_container_width=True)
 
 with tab_templates:
-    st.header("🧩 CSV Templates")
+    st.header("CSV Templates")
 
     st.write(
         """
-        Use the CSV templates in the `templates/` folder to prepare your own data.
-        Fill them manually in Excel, Numbers, LibreOffice or any text editor,
-        then save the completed files into the `data/` folder.
+        Download the CSV templates, fill them manually in Excel, Numbers,
+        LibreOffice or any spreadsheet editor, then save the completed files
+        into the `data/` folder.
+        """
+    )
+
+    template_files = {
+        "Dataset registry template": "templates/datasets_template.csv",
+        "Sample metadata template": "templates/sample_metadata_template.csv",
+        "QC summary template": "templates/qc_summary_template.csv",
+        "Sample H5AD paths template": "templates/sample_h5ad_paths_template.csv",
+    }
+
+    for label, file_path in template_files.items():
+        template_path = Path(file_path)
+
+        if template_path.exists():
+            st.download_button(
+                label=f"Download {label}",
+                data=template_path.read_text(),
+                file_name=template_path.name,
+                mime="text/csv",
+            )
+        else:
+            st.warning(f"Template file not found: {file_path}")
+
+    st.subheader("How to use the templates")
+
+    st.write(
+        """
+        1. Download the templates above.
+        2. Fill them with your own dataset information.
+        3. Save the completed files as:
         """
     )
 
     st.code(
         """
-templates/datasets_template.csv
-templates/sample_metadata_template.csv
-templates/qc_summary_template.csv
+data/datasets.csv
+data/sample_metadata.csv
+data/qc_summary.csv
+data/sample_h5ad_paths.csv
         """,
         language="text"
     )
 
-    st.subheader("Suggested workflow")
-
-    st.code(
+    st.write(
         """
-cp templates/datasets_template.csv data/datasets.csv
-cp templates/sample_metadata_template.csv data/sample_metadata.csv
-cp templates/qc_summary_template.csv data/qc_summary.csv
-        """,
-        language="bash"
+        For the exact H5AD-based combination optimizer, the most important file is:
+        """
     )
 
+    st.code("data/sample_h5ad_paths.csv", language="text")
+
     st.info(
-        "In future versions, the app will read user-provided `data/datasets.csv` "
-        "instead of the mock dataset file."
+        "The template files are small CSV files. Large H5AD, FASTQ, MTX or count matrix files should not be uploaded to GitHub."
     )

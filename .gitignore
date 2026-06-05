@@ -38,3 +38,9 @@ data/real_*.csv
 
 # Environment
 .env
+
+# User-provided CSV inputs
+data/datasets.csv
+data/sample_metadata.csv
+data/qc_summary.csv
+data/sample_h5ad_paths.csv
