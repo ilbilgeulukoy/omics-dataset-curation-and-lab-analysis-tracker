@@ -4,6 +4,24 @@ A Streamlit-based research dashboard for organizing omics datasets before downst
 
 This project helps track public or internal omics datasets, metadata completeness, QC availability, H5AD file paths, analysis-readiness status, curation notes, and dataset relationships. It combines a structured CSV and SQLite registry with Obsidian-compatible markdown notes, SQLite full-text retrieval, and an interactive knowledge graph.
 
+## Screenshots
+
+### Dashboard overview
+
+![Dashboard overview](screenshots/dashboard.png)
+
+### Dataset summary
+
+![Dataset summary](screenshots/dataset_summary.png)
+
+### Dataset combination optimiser
+
+![Dataset combination optimiser](screenshots/combination_optimiser.png)
+
+### Interactive Knowledge Graph
+
+![Knowledge Graph](screenshots/knowledge_graph.png)
+
 ## Project purpose
 
 Bioinformatics projects often become difficult before the actual analysis starts. Dataset information is usually scattered across papers, GEO accessions, local folders, Excel files, QC reports, H5AD files, and personal notes.
