@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
 from pathlib import Path
@@ -6,6 +7,12 @@ from pathlib import Path
 from src.schema import REQUIRED_COLUMNS, RECOMMENDED_COLUMNS, ASSAY_SPECIFIC_COLUMNS, VALID_ASSAY_TYPES
 from src.validation import validate_dataset_schema, add_path_availability_flags
 from src.combination import generate_dataset_combinations
+from src.knowledge_status import get_knowledge_status
+from src.knowledge_graph import generate_knowledge_graph_html
+from src.obsidian_notes import list_dataset_notes, read_dataset_note, get_note_path, list_protocol_notes, read_protocol_note
+from src.obsidian_search import search_obsidian_notes
+from src.rag_engine import answer_curation_question, count_indexed_chunks
+from src.ui_components import inject_liquid_glass_theme, app_hero, glass_header, info_card
 
 st.set_page_config(
     page_title="Omics Dataset Curation & Lab Analysis Tracker",
@@ -13,8 +20,12 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🧬 Omics Dataset Curation & Lab Analysis Tracker")
-st.subheader("Dataset curation, QC tracking and integration planning dashboard")
+inject_liquid_glass_theme()
+app_hero()
+
+
+
+
 
 @st.cache_data
 def load_dataset_summary():
@@ -48,13 +59,55 @@ for col in ["verified", "include_for_analysis"]:
 schema_result = validate_dataset_schema(df)
 df = add_path_availability_flags(df)
 
-tab_dashboard, tab_schema, tab_templates = st.tabs([
-    "📊 Dashboard",
-    "📄 CSV Format Guide",
-    "🧩 CSV Templates"
+tab_dashboard, tab_schema, tab_templates, tab_graph, tab_notes, tab_rag = st.tabs([
+    "Dashboard",
+    "CSV Format Guide",
+    "CSV Templates",
+    "Knowledge Graph",
+    "Obsidian Notes",
+    "Curation Assistant"
 ])
 
 with tab_dashboard:
+    glass_header("dashboard", "Dashboard", "Filter, inspect, and summarize curated omics datasets.")
+
+    knowledge_status = get_knowledge_status()
+    sqlite_counts = knowledge_status["sqlite_table_counts"]
+
+    kb_col1, kb_col2, kb_col3, kb_col4 = st.columns(4)
+
+    kb_col1.metric(
+        "SQLite database",
+        "Available" if knowledge_status["database_exists"] else "Missing"
+    )
+
+    kb_col2.metric(
+        "Dataset table rows",
+        sqlite_counts.get("datasets", 0)
+    )
+
+    kb_col3.metric(
+        "H5AD manifest rows",
+        sqlite_counts.get("h5ad_files", 0)
+    )
+
+    kb_col4.metric(
+        "Obsidian notes",
+        knowledge_status["obsidian_dataset_notes"]
+    )
+
+    with st.expander("Knowledge base paths"):
+        st.write("SQLite database:")
+        st.code(knowledge_status["database_path"])
+        st.write("Obsidian vault:")
+        st.code(knowledge_status["obsidian_vault_path"])
+
+    st.caption(
+        "SQLite stores structured dataset metadata, while Obsidian-compatible markdown notes store human-readable curation knowledge."
+    )
+
+    st.divider()
+
     if schema_result["is_valid"]:
         st.success("Dataset registry schema looks valid.")
     else:
@@ -135,7 +188,7 @@ with tab_dashboard:
 
     st.divider()
 
-    st.header("📋 Dataset Summary Table")
+    st.header("Dataset Summary Table")
     st.dataframe(filtered_df, use_container_width=True)
 
     st.caption(f"Showing {len(filtered_df)} of {len(df)} datasets after filters.")
@@ -144,7 +197,7 @@ with tab_dashboard:
 
     st.divider()
 
-    st.header("🧬 Assay Type Summary")
+    st.header("Assay Type Summary")
 
     if "assay_type" in filtered_df.columns:
         assay_summary = (
@@ -166,7 +219,7 @@ with tab_dashboard:
 
     st.divider()
 
-    st.header("📊 Dataset Overview")
+    st.header("Dataset Overview")
 
     col_a, col_b = st.columns(2)
 
@@ -207,7 +260,7 @@ with tab_dashboard:
 
     st.divider()
 
-    st.header("🧪 Integration Planning Table")
+    st.header("Integration Planning Table")
 
     available_cols = [
         col for col in [
@@ -329,7 +382,8 @@ with tab_dashboard:
         )
 
 with tab_schema:
-    st.header("📄 CSV Format Guide")
+    glass_header("database", "CSV Format Guide", "Review required and recommended metadata fields.")
+    st.header("CSV Format Guide")
 
     st.write(
         """
@@ -354,6 +408,7 @@ with tab_schema:
             st.dataframe(pd.DataFrame({"optional_column": columns}), use_container_width=True)
 
 with tab_templates:
+    glass_header("template", "CSV Templates", "Download standardized input templates for the tracker.")
     st.header("CSV Templates")
 
     st.write(
@@ -415,3 +470,252 @@ data/sample_h5ad_paths.csv
     st.info(
         "The template files are small CSV files. Large H5AD, FASTQ, MTX or count matrix files should not be uploaded to GitHub."
     )
+
+
+
+with tab_graph:
+    glass_header("graph", "Dataset Knowledge Graph", "Explore relationships between datasets, papers, accessions, platforms, and curation states.")
+    st.write("Interactive graph view for datasets, metadata, and optional H5AD/sample relationships.")
+
+    graph_meta = generate_knowledge_graph_html()
+    available_groups = graph_meta.get("available_groups", [])
+    available_datasets = graph_meta.get("available_datasets", [])
+
+    control_col, graph_col = st.columns([1, 3])
+
+    with control_col:
+        st.subheader("Graph controls")
+
+        enabled_groups = st.multiselect(
+            "Visible node groups",
+            options=available_groups,
+            default=[g for g in available_groups if g not in ["Sample", "H5AD file"]],
+        )
+
+        focus_dataset = st.selectbox(
+            "Focus on one dataset",
+            options=["All datasets"] + available_datasets,
+            index=0,
+        )
+
+        include_h5ad = st.checkbox("Include sample/H5AD nodes", value=False)
+
+        max_h5ad_per_dataset = st.slider(
+            "Max H5AD/sample nodes per dataset",
+            min_value=1,
+            max_value=20,
+            value=5,
+        )
+
+        gravity = st.slider(
+            "Repel force",
+            min_value=-200,
+            max_value=-20,
+            value=-90,
+            step=5,
+        )
+
+        spring_length = st.slider(
+            "Link distance",
+            min_value=80,
+            max_value=260,
+            value=140,
+            step=5,
+        )
+
+        central_gravity = st.slider(
+            "Center force",
+            min_value=0.0,
+            max_value=0.1,
+            value=0.02,
+            step=0.005,
+        )
+
+        render_graph = st.button("Render graph")
+
+        st.caption("Tip: turn off H5AD nodes first, then enable them after the main structure looks clean.")
+
+    with graph_col:
+        if render_graph or True:
+            graph_status = generate_knowledge_graph_html(
+                enabled_groups=enabled_groups,
+                focus_dataset=None if focus_dataset == "All datasets" else focus_dataset,
+                include_h5ad=include_h5ad,
+                max_h5ad_per_dataset=max_h5ad_per_dataset,
+                gravity=gravity,
+                spring_length=spring_length,
+                central_gravity=central_gravity,
+            )
+
+            if graph_status["success"] and graph_status["html_path"]:
+                st.caption(
+                    f"Nodes: {graph_status['n_nodes']} | Edges: {graph_status['n_edges']}"
+                )
+
+                html_path = Path(graph_status["html_path"])
+                html_content = html_path.read_text(encoding="utf-8")
+
+                components.html(
+                    html_content,
+                    height=860,
+                    scrolling=True,
+                )
+            else:
+                st.warning("Knowledge graph could not be generated.")
+
+
+with tab_notes:
+    glass_header("notes", "Obsidian Curation Notes", "Browse and search generated markdown notes.")
+
+    st.write(
+        "Browse the Obsidian-compatible markdown notes generated from the SQLite dataset registry."
+    )
+
+    st.divider()
+
+    st.subheader("Search curation notes")
+
+    search_query = st.text_input(
+        "Search query",
+        placeholder="Example: incomplete metadata, H5AD, preprocessing, ovarian cancer, 10x Genomics"
+    )
+
+    if search_query:
+        search_results = search_obsidian_notes(search_query, max_results=12)
+
+        if search_results:
+            st.caption(f"Found {len(search_results)} matching note sections.")
+
+            for result in search_results:
+                with st.expander(
+                    f"{result['file']} | {result['section']} | score {result['score']}"
+                ):
+                    st.write(result["preview"])
+        else:
+            st.info("No matching notes found.")
+
+    dataset_notes = list_dataset_notes()
+    protocol_notes = list_protocol_notes()
+
+    note_col, preview_col = st.columns([1, 2])
+
+    with note_col:
+        st.subheader("Dataset notes")
+
+        if dataset_notes:
+            selected_note = st.selectbox(
+                "Select dataset note",
+                options=dataset_notes,
+            )
+
+            st.caption("Markdown file path:")
+            st.code(get_note_path(selected_note))
+        else:
+            selected_note = None
+            st.warning("No dataset notes found. Run scripts/export_datasets_to_obsidian.py first.")
+
+        st.divider()
+
+        st.subheader("Protocol notes")
+
+        if protocol_notes:
+            selected_protocol = st.selectbox(
+                "Select protocol note",
+                options=protocol_notes,
+            )
+        else:
+            selected_protocol = None
+            st.info("No protocol notes found.")
+
+    with preview_col:
+        if selected_note:
+            st.subheader("Dataset note preview")
+            note_content = read_dataset_note(selected_note)
+            st.markdown(note_content)
+
+        if selected_protocol:
+            st.divider()
+            st.subheader("Protocol note preview")
+            protocol_content = read_protocol_note(selected_protocol)
+            st.markdown(protocol_content)
+
+
+with tab_rag:
+    glass_header("assistant", "SQL-backed Curation Assistant", "Retrieve evidence from indexed Obsidian notes using SQLite full-text search.")
+
+    info_card("""
+<strong>How the curation assistant works</strong><br>
+Obsidian markdown notes are split into sections, indexed into SQLite as note chunks,
+and searched with SQLite full-text search. The assistant retrieves matching evidence
+sections and displays grounded answers with source note paths. This is a lightweight
+retrieval system for dataset curation decisions, not a biological interpretation model.
+""")
+
+    st.write(
+        "Ask questions over the indexed Obsidian curation notes. Retrieval is powered by SQLite full-text search."
+    )
+
+    indexed_chunks = count_indexed_chunks()
+
+    col_rag_1, col_rag_2 = st.columns(2)
+    col_rag_1.metric("Indexed note chunks", indexed_chunks)
+    col_rag_2.metric("Retrieval backend", "SQLite FTS")
+
+    if indexed_chunks == 0:
+        st.warning(
+            "No indexed note chunks found. Run scripts/index_obsidian_notes_to_sqlite.py first."
+        )
+
+    example_queries = [
+        "Which datasets mention metadata?",
+        "Which datasets have H5AD information?",
+        "What is the preprocessing status?",
+        "Which notes mention ovarian cancer?",
+        "Which datasets mention 10x Genomics?",
+        "Which curation notes discuss data limitations?",
+    ]
+
+    selected_example = st.selectbox(
+        "Example question",
+        options=["Write my own question"] + example_queries,
+    )
+
+    default_query = "" if selected_example == "Write my own question" else selected_example
+
+    rag_query = st.text_area(
+        "Question",
+        value=default_query,
+        placeholder="Example: Which datasets have incomplete metadata or H5AD information?",
+        height=100,
+    )
+
+    max_results = st.slider(
+        "Number of retrieved sections",
+        min_value=3,
+        max_value=15,
+        value=8,
+    )
+
+    if st.button("Ask curation assistant"):
+        if not rag_query.strip():
+            st.info("Write a question first.")
+        else:
+            rag_response = answer_curation_question(
+                query=rag_query,
+                max_results=max_results,
+            )
+
+            st.subheader("Answer")
+            st.text(rag_response["answer"])
+
+            st.subheader("Retrieved evidence")
+
+            if rag_response["results"]:
+                for result in rag_response["results"]:
+                    with st.expander(
+                        f"{result['note_name']} | {result['section_heading']} | {result['file_path']}"
+                    ):
+                        st.write(result["content"])
+            else:
+                st.info("No evidence retrieved.")
+

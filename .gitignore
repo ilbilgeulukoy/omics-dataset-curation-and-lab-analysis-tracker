@@ -2,45 +2,30 @@
 __pycache__/
 *.pyc
 .venv/
-venv/
-
-# Database
-*.db
+.venv-1/
 
 # macOS
 .DS_Store
 
-# Streamlit
-.streamlit/
-
-# Reports generated locally
-reports/*.csv
-
-# Large omics files
-*.h5ad
-*.h5ad.gz
-*.loom
-*.rds
-*.h5
-*.mtx
-*.mtx.gz
-
-# Local/private data
-data/*.db
-data/combi_final.txt
-data/sample_h5ad_paths.csv
-data/gene_sets/
-data/h5ad_cache/
-data/real_*.csv
-
-# Streamlit local config
-.streamlit/
-
-# Environment
-.env
-
-# User-provided CSV inputs
+# Private user data
 data/datasets.csv
 data/sample_metadata.csv
 data/qc_summary.csv
 data/sample_h5ad_paths.csv
+data/combi_final.txt
+data/omics_tracker.db
+
+# Large omics files
+*.h5ad
+*.h5ad.gz
+*.h5
+*.mtx
+*.rds
+
+# Streamlit / local outputs
+.streamlit/
+reports/*.html
+reports/*.png
+
+# Generated pyvis / graph assets
+lib/

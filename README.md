@@ -1,265 +1,547 @@
-# Omics Dataset Curation & Lab Analysis Tracker
+# Omics Dataset Curation and Lab Analysis Tracker
 
-A Streamlit-based dashboard for curating omics datasets, validating standardized CSV manifests, tracking analysis-ready files, and ranking scRNA-seq dataset combinations based on exact common gene overlap, total patient count, and total cell count.
+A Streamlit-based research dashboard for organizing omics datasets before downstream analysis.
 
-This project was designed as a bioinformatics portfolio project combining dataset curation, lab workflow tracking, single-cell analysis metadata management, and integration planning.
+This project helps track public or internal omics datasets, metadata completeness, QC availability, H5AD file paths, analysis-readiness status, curation notes, and dataset relationships. It combines a structured CSV and SQLite registry with Obsidian-compatible markdown notes, SQLite full-text retrieval, and an interactive knowledge graph.
 
-## Project Goals
+## Project purpose
 
-The dashboard helps researchers track omics datasets across different analysis stages:
+Bioinformatics projects often become difficult before the actual analysis starts. Dataset information is usually scattered across papers, GEO accessions, local folders, Excel files, QC reports, H5AD files, and personal notes.
 
-- Dataset curation
-- Sample-level metadata tracking
-- H5AD file manifest validation
-- QC / preprocessing report tracking
-- scRNA-seq dataset combination planning
-- CSV export for downstream analysis
+This tool provides a structured human-in-the-loop workflow for dataset curation.
 
-The project is designed to support multiple omics assay types:
+The user curates dataset metadata once in CSV format. The tool then automatically converts that structured information into:
 
-- scRNA-seq
-- Spatial transcriptomics
-- Bulk RNA-seq
-- Proteomics
-- qPCR
+- a Streamlit dashboard
+- a SQLite dataset registry
+- Obsidian-compatible curation notes
+- a searchable note index
+- a SQL-backed curation assistant
+- an interactive knowledge graph
 
-## Main Features
+## What problem does this solve?
 
-### Dataset Registry Dashboard
+The project is designed for the upstream dataset organization phase of omics analysis.
 
-The dashboard displays a standardized dataset registry with dataset name, assay type, disease area, species, platform, patient count, sample count, cell or spot count, gene count, data access status, verification status, analysis inclusion status, primary data path, metadata path, and QC report path.
+It helps answer questions such as:
 
-### CSV Format Guide
+- Which datasets are available?
+- Which datasets have paper links, accessions, and data links?
+- Which datasets are already in H5AD format?
+- Which datasets have QC reports?
+- Which datasets have missing metadata?
+- Which datasets are verified?
+- Which datasets should be included in downstream analysis?
+- Which samples have local H5AD files?
+- Which datasets share the same disease area, assay type, species, platform, or status?
+- Which curation notes mention H5AD, metadata, QC, preprocessing, or platform information?
 
-The app includes an internal CSV format guide describing required columns, recommended columns, valid assay types, and assay-specific optional columns.
+## What this tool does
 
-### CSV Templates
+The dashboard supports:
 
-Reusable templates are provided in the templates/ folder:
+- omics dataset registry management
+- standardized CSV input templates
+- SQLite-backed metadata storage
+- H5AD manifest tracking
+- QC report path tracking
+- analysis-readiness status tracking
+- Obsidian-compatible markdown note export
+- SQLite full-text search over curation notes
+- grounded retrieval answers with source paths
+- interactive dataset knowledge graph visualization
+- dataset combination planning before downstream analysis
 
-    templates/datasets_template.csv
-    templates/sample_metadata_template.csv
-    templates/qc_summary_template.csv
-    templates/sample_h5ad_paths_template.csv
+## What this tool does not do
 
-Users can copy these templates, fill them manually, and save the completed files into the data/ folder.
+This project is not a downstream omics analysis pipeline.
 
-### Dataset Combination Optimizer
+It does not perform:
 
-The scRNA-seq combination optimizer uses preprocessing-passed H5AD sample files.
+- FASTQ processing
+- Cell Ranger execution
+- STARsolo or kallisto-bustools execution
+- clustering
+- cell type annotation
+- differential expression analysis
+- pathway enrichment analysis
+- biological interpretation
+- Seurat or Scanpy replacement analysis
 
-It computes:
+The goal is to organize, document, and evaluate datasets before downstream analysis.
 
-- Exact common gene intersection from adata.var_names
-- Total number of patients
-- Total number of cells
-- Total number of samples
+## Why CSV curation is still manual
 
-Ranking is performed without artificial scores or heuristic penalties:
+This tool does not try to fully automate biological dataset curation, because public omics metadata is often incomplete, inconsistent, or project-specific.
 
-1. Highest total patient count
-2. Highest number of common genes
-3. Highest total cell count
+For example, public datasets may have:
 
-## Project Structure
+- unclear sample names
+- inconsistent metadata columns
+- missing patient annotations
+- missing QC reports
+- different file structures
+- unclear sample-to-patient mapping
+- inconsistent H5AD or raw matrix naming
+- incomplete supplementary files
+- project-specific inclusion criteria
 
-    omics-dataset-curation-and-lab-analysis-tracker/
-    ├── app.py
-    ├── requirements.txt
-    ├── README.md
-    ├── .gitignore
-    ├── data/
-    │   └── mock_datasets.csv
-    ├── templates/
-    │   ├── datasets_template.csv
-    │   ├── sample_metadata_template.csv
-    │   ├── qc_summary_template.csv
-    │   └── sample_h5ad_paths_template.csv
-    ├── src/
-    │   ├── schema.py
-    │   ├── validation.py
-    │   ├── combination.py
-    │   ├── database.py
-    │   ├── crud.py
-    │   ├── models.py
-    │   ├── plots.py
-    │   └── utils.py
-    ├── scripts/
-    │   └── convert_combi_txt_to_manifest.py
-    ├── reports/
-    ├── screenshots/
-    └── api/
-        └── main.py
+For this reason, the project uses a human-in-the-loop design.
 
-## Installation
+The user reviews and curates the dataset metadata once in CSV format. After that, the tool automatically builds the registry, dashboard, markdown notes, search index, retrieval assistant, and knowledge graph.
 
-Clone the repository:
+## Main workflow
 
-    git clone https://github.com/YOUR_USERNAME/omics-dataset-curation-and-lab-analysis-tracker.git
+The workflow is:
+
+1. Fill CSV templates with dataset information
+2. Save the completed CSV files under the data folder
+3. Import CSV files into SQLite
+4. Export dataset notes to an Obsidian-compatible vault
+5. Index the notes into SQLite full-text search
+6. Run the Streamlit dashboard
+7. Explore datasets, notes, retrieval results, and knowledge graph
+
+Workflow diagram:
+
+CSV templates
+→ SQLite registry
+→ Obsidian markdown notes
+→ SQLite full-text note index
+→ Curation Assistant
+→ Knowledge Graph
+→ Dataset readiness review
+
+## Installation from zero
+
+A normal user does not need to manually create folders or copy files.
+
+The standard installation workflow is:
+
+    GitHub repository
+    → git clone
+    → create Python environment
+    → install requirements
+    → build local SQLite database
+    → export Obsidian notes
+    → index notes
+    → launch Streamlit app
+
+Clone the repository from GitHub:
+
+    git clone https://github.com/ilbilgeulukoy/omics-dataset-curation-and-lab-analysis-tracker.git
+
+Enter the project folder:
+
     cd omics-dataset-curation-and-lab-analysis-tracker
 
-Create a Python environment.
-
-Using venv:
+Create a local Python virtual environment:
 
     python3 -m venv .venv
+
+Activate the environment:
+
     source .venv/bin/activate
-    pip install -r requirements.txt
 
-Or using conda:
+Upgrade pip:
 
-    conda create -n omics-tracker python=3.11
-    conda activate omics-tracker
-    pip install -r requirements.txt
+    python -m pip install --upgrade pip
 
-Run the app:
+Install project dependencies:
+
+    python -m pip install -r requirements.txt
+
+The `.venv` folder is a local Python environment created only on the user's computer. It is not committed to GitHub.
+
+## Option A: run with demo data
+
+The project can run without private lab data.
+
+This is the recommended first test for a new user.
+
+If `data/datasets.csv` is not present, the app uses the demo file:
+
+    data/mock_datasets.csv
+
+To initialize the demo database and run the app:
+
+    python scripts/import_csv_to_sqlite.py
+
+    python scripts/export_datasets_to_obsidian.py
+
+    python scripts/index_obsidian_notes_to_sqlite.py
 
     streamlit run app.py
 
-Open the local URL shown in the terminal, usually:
+Then open the local Streamlit URL shown in the terminal.
+
+Usually:
 
     http://localhost:8501
 
-## Input Files
+This demo mode lets a collaborator test the dashboard, Obsidian note export, SQL-backed Curation Assistant, and Knowledge Graph without filling any CSV files first.
 
-### Dataset Registry
+## Option B: run with your own datasets
 
-The main dataset registry should follow this format:
+To use real lab or project data, the user fills the CSV templates.
 
-    dataset_id,dataset_name,assay_type,disease_area,species,platform,n_patients,n_samples,n_cells_or_spots,n_genes,data_level,data_access,verified,include_for_analysis,primary_data_path,metadata_path,qc_report_path,notes
-    SC001,example_scRNA_dataset,scRNA-seq,ovarian cancer,human,10x Genomics,6,18,76000,19750,h5ad,public,yes,yes,path/to/file.h5ad,path/to/metadata.csv,path/to/qc_report.html,example dataset
-    SP001,example_spatial_dataset,spatial,ovarian cancer,human,10x Visium,4,12,55000,18000,spatial_folder,local_only,yes,yes,path/to/spatial_folder,path/to/spatial_metadata.csv,path/to/spatial_qc.html,example spatial dataset
+Templates are provided in:
 
-Required columns:
+    templates/
+
+The main template is:
+
+    templates/datasets_template.csv
+
+After filling it, save it as:
+
+    data/datasets.csv
+
+Optional files can also be added:
+
+    data/sample_metadata.csv
+    data/qc_summary.csv
+    data/sample_h5ad_paths.csv
+
+Then rebuild the local registry and launch the app:
+
+    python scripts/import_csv_to_sqlite.py
+
+    python scripts/export_datasets_to_obsidian.py
+
+    python scripts/index_obsidian_notes_to_sqlite.py
+
+    streamlit run app.py
+
+Only `data/datasets.csv` is essential for the main dataset registry. The other files add sample-level, QC-level, and H5AD-level tracking.
+
+The CSV curation step is intentionally human-in-the-loop because public omics metadata is often incomplete, inconsistent, or project-specific.
+
+## Input files
+
+### 1. datasets.csv
+
+This is the main dataset registry.
+
+Typical columns include:
 
     dataset_id
     dataset_name
+    accession
+    paper_title
+    paper_link
+    data_link
+    doi
+    publication_year
+    first_author
     assay_type
     disease_area
     species
-    primary_data_path
+    platform
+    chemistry_used
+    n_patients
+    n_samples
+    n_cells_or_spots
+    n_genes
+    data_level
+    data_access
     verified
     include_for_analysis
+    primary_data_path
+    metadata_path
+    qc_report_path
+    data_preparation_status
+    data_verification_status
+    preprocessing_status
+    data_verification_comment
+    notes
 
-Valid assay types:
+### 2. sample_metadata.csv
 
-    scRNA-seq
-    spatial
-    bulk RNA-seq
-    proteomics
-    qPCR
+Optional sample-level metadata.
 
-### H5AD Sample Manifest
+Typical columns include:
 
-For the combination optimizer, provide a sample-level H5AD manifest:
+    dataset_id
+    sample_id
+    patient_id
+    condition
+    tissue
+    sample_type
+    batch
+    notes
 
-    dataset_id,dataset_name,sample_id,h5ad_path
-    sample,year_author,dataset_name,/server/path/to/sample_dataset_id/file.h5ad
+### 3. qc_summary.csv
 
-Each row represents one preprocessing-passed H5AD sample file.
+Optional QC tracking file.
 
-The optimizer requires that these H5AD paths are accessible from the machine where the app is running.
+Typical columns include:
 
-## Converting a TXT List of H5AD Paths
+    dataset_id
+    sample_id
+    n_cells
+    n_genes
+    mitochondrial_percent
+    doublet_rate
+    qc_status
+    qc_report_path
+    notes
 
-If you have a text file containing one H5AD path per line, save it as:
+### 4. sample_h5ad_paths.csv
 
-    data/combi_final.txt
+Optional H5AD manifest.
 
-Example content:
+Typical columns include:
 
-    /data/project/dataset_1/sample_A/file.h5ad
-    /data/project/dataset_1/sample_B/file.h5ad
-    /data/project/dataset_2/sample_C/file.h5ad
+    dataset_id
+    dataset_name
+    sample_id
+    h5ad_path
 
-Then run:
+This file is useful when each sample has a separate processed H5AD file.
 
-    python scripts/convert_combi_txt_to_manifest.py
+## Outputs
 
-This creates:
+The project produces several outputs.
 
+### Streamlit dashboard
+
+Main user interface.
+
+It displays:
+
+- dataset overview
+- filtering tools
+- summary metrics
+- assay and disease summaries
+- dataset tables
+- CSV format guide
+- template downloads
+- Obsidian notes browser
+- Curation Assistant
+- Knowledge Graph
+
+### SQLite database
+
+Generated file:
+
+    data/omics_tracker.db
+
+This database can contain:
+
+    datasets
+    h5ad_files
+    note_chunks
+    note_chunks_fts
+
+The database is generated locally and should usually not be committed to GitHub.
+
+### Obsidian-compatible vault
+
+Generated folder:
+
+    obsidian_vault/
+
+Dataset notes are exported as markdown files:
+
+    obsidian_vault/datasets/SC001.md
+    obsidian_vault/datasets/SC002.md
+    obsidian_vault/datasets/SP001.md
+
+These notes can be opened directly in Obsidian or browsed inside the Streamlit app.
+
+### Knowledge graph
+
+Generated HTML file:
+
+    reports/knowledge_graph.html
+
+The graph shows relationships between:
+
+- datasets
+- accessions
+- papers
+- assay types
+- disease areas
+- species
+- platforms
+- data levels
+- verification status
+- preprocessing status
+- samples
+- H5AD files
+
+### Curation Assistant results
+
+The SQL-backed Curation Assistant retrieves evidence from indexed Obsidian notes.
+
+Example questions:
+
+    Which datasets mention H5AD?
+
+    Which datasets have QC reports?
+
+    Which datasets are spatial transcriptomics?
+
+    Which datasets mention ovarian cancer?
+
+    Which datasets use 10x Genomics?
+
+    Which datasets have public data access?
+
+The assistant returns:
+
+- grounded answer
+- retrieved evidence sections
+- source note paths
+
+## SQL-backed Curation Assistant
+
+The assistant is a lightweight retrieval system.
+
+It works as follows:
+
+1. Markdown notes are split into sections
+2. Sections are stored as chunks in SQLite
+3. SQLite full-text search indexes the chunks
+4. A user asks a curation question
+5. Matching note sections are retrieved
+6. The app displays a grounded answer with sources
+
+This is not a full semantic LLM RAG system yet.
+
+Current retrieval layer:
+
+- markdown section chunking: yes
+- SQLite storage: yes
+- SQLite full-text search: yes
+- source display: yes
+- embeddings: no
+- vector database: no
+- LLM answer synthesis: no
+
+A future version could add semantic embeddings and vector search.
+
+## Knowledge Graph
+
+The Knowledge Graph converts the structured dataset registry into an interactive network.
+
+It helps users visually inspect how datasets connect to:
+
+- disease areas
+- assay types
+- platforms
+- species
+- accessions
+- papers
+- data availability
+- preprocessing status
+- H5AD files
+
+This makes the project useful not only as a table-based tracker but also as a lightweight lab knowledge system.
+
+## Repository structure
+
+Typical structure:
+
+    app.py
+    requirements.txt
+    README.md
+    QUICKSTART.md
+    src/
+    scripts/
+    templates/
+    data/
+    obsidian_vault/
+    reports/
+
+Important source modules:
+
+    src/knowledge_status.py
+    src/knowledge_graph.py
+    src/obsidian_notes.py
+    src/obsidian_search.py
+    src/rag_engine.py
+    src/ui_components.py
+
+Important scripts:
+
+    scripts/import_csv_to_sqlite.py
+    scripts/export_datasets_to_obsidian.py
+    scripts/index_obsidian_notes_to_sqlite.py
+
+## GitHub and data privacy
+
+Private data and generated local outputs should not be committed.
+
+Usually ignore:
+
+    data/datasets.csv
+    data/sample_metadata.csv
+    data/qc_summary.csv
     data/sample_h5ad_paths.csv
+    data/omics_tracker.db
+    reports/*.html
+    .venv/
+    __pycache__/
+    *.h5ad
+    *.h5
+    *.mtx
+    *.rds
 
-The generated CSV can be edited manually if needed.
+Keep public demo files and code:
 
-## Running on a Server or HPC Environment
+    data/mock_datasets.csv
+    templates/
+    src/
+    scripts/
+    app.py
+    requirements.txt
+    README.md
+    QUICKSTART.md
 
-This dashboard can be run directly on the server where the H5AD files are stored. This is recommended for the exact dataset combination optimizer.
+## Future extensions
 
-### 1. Clone the repository on the server
+Possible future improvements:
 
-    git clone https://github.com/YOUR_USERNAME/omics-dataset-curation-and-lab-analysis-tracker.git
-    cd omics-dataset-curation-and-lab-analysis-tracker
+- semi-automatic GEO metadata draft generation
+- integration with an input data standardizer project
+- automatic detection of Matrix Market, H5AD, H5, and metadata files
+- sample-level metadata validation
+- H5AD schema validation
+- semantic RAG using embeddings
+- vector database support
+- LLM-based curation note summarization
+- lab server deployment
+- role-based multi-user version
+- Streamlit admin interface for adding datasets without editing CSV manually
 
-### 2. Create an environment
+## Possible integration with an input data standardizer
 
-Using conda:
+This project can be connected to a separate input data standardizer.
 
-    conda create -n omics-tracker python=3.11
-    conda activate omics-tracker
-    pip install -r requirements.txt
+Possible combined workflow:
 
-Or using venv:
+    Input Data Standardizer
+    → detects raw downloaded files
+    → checks matrix / metadata / H5AD structure
+    → creates standardized H5AD files
+    → exports dataset and sample manifests
+    → Omics Dataset Curation Tracker imports those manifests
+    → dashboard, SQLite registry, notes, assistant, and graph are updated
 
-    python3 -m venv .venv
-    source .venv/bin/activate
-    pip install -r requirements.txt
+In this combined design, the standardizer prepares clean inputs, while this tracker manages dataset-level readiness and knowledge organization.
 
-### 3. Prepare input files
+## Portfolio positioning
 
-Copy the templates:
+Short description:
 
-    cp templates/datasets_template.csv data/datasets.csv
-    cp templates/sample_h5ad_paths_template.csv data/sample_h5ad_paths.csv
-    cp templates/qc_summary_template.csv data/qc_summary.csv
+    Streamlit dashboard for omics dataset curation, SQLite-backed metadata tracking, Obsidian-compatible curation notes, H5AD manifest handling, SQL full-text retrieval, and interactive knowledge graph visualization.
 
-Edit data/sample_h5ad_paths.csv so that each h5ad_path points to a real file on the server.
+CV bullet:
 
-### 4. Run Streamlit on the server
+    Developed a Streamlit-based omics dataset curation and lab analysis tracker with standardized CSV input templates, SQLite-backed dataset registry, Obsidian-compatible curation notes, server-compatible H5AD manifest handling, SQL full-text retrieval over indexed notes, and interactive knowledge graph visualization.
 
-    streamlit run app.py --server.address 127.0.0.1 --server.port 8501
+Interview explanation:
 
-### 5. Open the app locally using SSH tunneling
-
-On your local computer, open a new terminal:
-
-    ssh -L 8501:localhost:8501 USERNAME@SERVER_ADDRESS
-
-Then open your browser:
-
-    http://localhost:8501
-
-The app runs on the server, while the interface is accessed from your local browser.
-
-## Example Server Workflow
-
-    ssh USERNAME@SERVER_ADDRESS
-
-    git clone https://github.com/YOUR_USERNAME/omics-dataset-curation-and-lab-analysis-tracker.git
-    cd omics-dataset-curation-and-lab-analysis-tracker
-
-    conda create -n omics-tracker python=3.11
-    conda activate omics-tracker
-    pip install -r requirements.txt
-
-    cp /path/to/combi_final.txt data/combi_final.txt
-    python scripts/convert_combi_txt_to_manifest.py
-
-    streamlit run app.py --server.address 127.0.0.1 --server.port 8501
-
-On your local machine:
-
-    ssh -L 8501:localhost:8501 USERNAME@SERVER_ADDRESS
-
-Open:
-
-    http://localhost:8501
-
-## Notes on Large H5AD Files
-
-The exact combination optimizer reads H5AD files to extract:
-
-- adata.var_names
-- adata.n_obs
-
-For large datasets or hundreds of H5AD files, this step can be slow. In future versions, a cache-building script can be added to precompute dataset-level gene sets and cell counts once, then reuse them during dashboard sessions.
+    In many bioinformatics projects, the difficulty is not only downstream analysis but also knowing which datasets are actually usable. I built this dashboard to track omics dataset sources, metadata completeness, QC availability, H5AD paths, and inclusion decisions before analysis. The structured metadata is stored in SQLite, while human-readable curation notes are exported to an Obsidian-compatible vault. I also implemented a lightweight retrieval assistant using SQLite full-text search over the indexed notes, so users can ask questions such as which datasets mention H5AD, QC reports, or specific platforms. Finally, I added an interactive knowledge graph to visualize relationships between datasets, accessions, assay types, papers, platforms, and curation status.
