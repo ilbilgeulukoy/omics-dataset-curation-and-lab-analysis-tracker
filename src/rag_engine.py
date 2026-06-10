@@ -149,7 +149,7 @@ def build_grounded_answer(query: str, results: list[dict]) -> str:
     if not results:
         return (
             "No matching curation evidence was found in the indexed Obsidian notes. "
-            "Try a more specific query such as H5AD, metadata, preprocessing, ovarian cancer, 10x Genomics, or QC report."
+            "Try a more specific query such as H5AD, metadata, preprocessing, synthetic dataset, 10x Genomics, or QC report."
         )
 
     lines = []

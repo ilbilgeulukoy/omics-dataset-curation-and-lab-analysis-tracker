@@ -1,18 +1,7 @@
-dataset_name,n_patients,n_cells,n_samples,n_genes,h5ad_available,qc_report_available,verified,include_for_combination,h5ad_path,qc_report_path,notes
-2018_Shih,9,2488,16,20500,yes,yes,yes,yes,/data/ulukoy/ovarian_cancer/data/2018_Shih/a_data_raw/annotated/2018_Shih_rawmtx.h5ad.gz,/data/ulukoy/ovarian_cancer/data/2018_Shih/report.html,QC report available
-2020_Geistlinger,5,82000,24,19800,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2020_Geistlinger/a_data_raw/annotated/2020_Geistlinger_rawmtx.h5ad.gz,,No QC report yet
-2020_Tongton,8,54000,31,20120,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2020_Tongton/a_data_raw/annotated/2020_Tongton_rawmtx.h5ad.gz,,Ready for combination analysis
-2021_Olelekan,6,76000,18,19750,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2021_Olelekan/a_data_raw/annotated/2021_Olelekan_rawmtx.h5ad.gz,,Count matrix available
-2021_Regner,11,145000,42,20300,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2021_Regner/a_data_raw/annotated/2021_Regner_rawmtx.h5ad.gz,,High patient number
-2022_Junfen,7,69000,21,18900,yes,no,no,yes,/data/ulukoy/ovarian_cancer/data/2022_Junfen/a_data_raw/annotated/2022_Junfen_rawmtx.h5ad.gz,,Needs verification
-2023_Guo,5,120000,35,19950,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2023_Guo/a_data_raw/annotated/2023_Guo_rawmtx.h5ad.gz,,Good cell number
-2021_Hippen,3,45000,12,19200,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2021_Hippen/a_data_raw/annotated/2021_Hippen_rawmtx.h5ad.gz,,Small cohort
-2023_Hippen,8,91000,27,19600,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2023_Hippen/a_data_raw/annotated/2023_Hippen_rawmtx.h5ad.gz,,Good candidate
-2024_Brand,4,38000,11,18750,yes,no,no,yes,/data/ulukoy/ovarian_cancer/data/2024_Brand/a_data_raw/annotated/2024_Brand_rawmtx.h5ad.gz,,Needs verification
-2024_Denisenko,10,132000,30,20400,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2024_Denisenko/a_data_raw/annotated/2024_Denisenko_rawmtx.h5ad.gz,,Strong candidate
-2025_Pounds,9,118000,25,20050,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2025_Pounds/a_data_raw/annotated/2025_Pounds_rawmtx.h5ad.gz,,Recent dataset
-2022_Ignacio,41,620000,140,21000,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2022_Ignacio/a_data_raw/annotated/2022_Ignacio_rawmtx.h5ad.gz,,Large cohort
-2022_Zhang,11,210000,38,20250,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2022_Zhang/a_data_raw/annotated/2022_Zhang_rawmtx.h5ad.gz,,Good integration candidate
-2021_Li,1,16000,3,18100,yes,no,yes,no,/data/ulukoy/ovarian_cancer/data/2021_Li/a_data_raw/annotated/2021_Li_rawmtx.h5ad.gz,,Excluded because only one patient
-2022_Shen,1,14000,2,17900,yes,no,no,no,/data/ulukoy/ovarian_cancer/data/2022_Shen/a_data_raw/annotated/2022_Shen_rawmtx.h5ad.gz,,Low patient number and needs verification
-2022_Loret,3,28000,8,18500,yes,no,yes,yes,/data/ulukoy/ovarian_cancer/data/2022_Loret/a_data_raw/annotated/2022_Loret_rawmtx.h5ad.gz,,Small but usable
+dataset_id,n_patients,n_cells,n_samples,n_genes,metadata_available,qc_report_available,h5ad_available,include_for_analysis,h5ad_path,qc_report_path,notes
+DEMO_SC001,8,52000,12,18000,yes,yes,yes,yes,demo_data/sc001/processed/demo_sc001.h5ad,demo_data/sc001/qc_report.html,Synthetic single-cell demo dataset
+DEMO_SC002,6,41000,9,17000,yes,yes,yes,yes,demo_data/sc002/processed/demo_sc002.h5ad,demo_data/sc002/qc_report.html,Synthetic tumor microenvironment demo dataset
+DEMO_SC003,5,12000,7,16000,yes,yes,yes,maybe,demo_data/sc003/processed/demo_sc003.h5ad,demo_data/sc003/qc_report.html,Synthetic stromal cell demo dataset
+DEMO_SP001,4,18000,4,19000,yes,yes,yes,yes,demo_data/sp001/processed/demo_sp001.h5ad,demo_data/sp001/qc_report.html,Synthetic spatial transcriptomics demo dataset
+DEMO_SP002,3,25000,3,15000,yes,yes,yes,maybe,demo_data/sp002/processed/demo_sp002.h5ad,demo_data/sp002/qc_report.html,Synthetic imaging-based spatial demo dataset
+DEMO_BK001,10,0,20,20000,yes,yes,no,no,demo_data/bk001/counts/demo_bulk_counts.csv,demo_data/bk001/qc_report.html,Synthetic bulk RNA-seq demo dataset

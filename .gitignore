@@ -29,3 +29,5 @@ reports/*.png
 
 # Generated pyvis / graph assets
 lib/
+
+obsidian_vault/

@@ -577,7 +577,7 @@ with tab_notes:
 
     search_query = st.text_input(
         "Search query",
-        placeholder="Example: incomplete metadata, H5AD, preprocessing, ovarian cancer, 10x Genomics"
+        placeholder="Example: incomplete metadata, H5AD, preprocessing, synthetic disease area, 10x Genomics"
     )
 
     if search_query:
@@ -670,7 +670,7 @@ retrieval system for dataset curation decisions, not a biological interpretation
         "Which datasets mention metadata?",
         "Which datasets have H5AD information?",
         "What is the preprocessing status?",
-        "Which notes mention ovarian cancer?",
+        "Which notes mention synthetic disease area?",
         "Which datasets mention 10x Genomics?",
         "Which curation notes discuss data limitations?",
     ]

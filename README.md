@@ -10,17 +10,11 @@ This project helps track public or internal omics datasets, metadata completenes
 
 ![Dashboard overview](screenshots/dashboard.png)
 
-### Dataset summary
+## Demo data privacy note
 
-![Dataset summary](screenshots/dataset_summary.png)
+The repository demo dataset is fully synthetic. It does not contain real patient data, internal laboratory paths, private server paths, institutional data, internal project data, or unpublished metadata.
 
-### Dataset combination optimiser
-
-![Dataset combination optimiser](screenshots/combination_optimiser.png)
-
-### Interactive Knowledge Graph
-
-![Knowledge Graph](screenshots/knowledge_graph.png)
+Real project CSV files should stay local and are ignored by Git through `.gitignore`.
 
 ## Project purpose
 
@@ -401,7 +395,7 @@ Example questions:
 
     Which datasets are spatial transcriptomics?
 
-    Which datasets mention ovarian cancer?
+    Which datasets mention synthetic disease area?
 
     Which datasets use 10x Genomics?
 
