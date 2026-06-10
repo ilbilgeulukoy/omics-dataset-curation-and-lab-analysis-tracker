@@ -129,7 +129,7 @@ The standard installation workflow is:
 
 Clone the repository from GitHub:
 
-    git clone https://github.com/ilbilgeulukoy/omics-dataset-curation-and-lab-analysis-tracker.git
+    git clone https://github.com/ilbilgeulukoy/Omics-dataset-curation-and-analysis-tracker.git
 
 Enter the project folder:
 

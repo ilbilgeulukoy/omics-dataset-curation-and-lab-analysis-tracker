@@ -16,7 +16,7 @@ Example:
 
 Clone the repository:
 
-    git clone https://github.com/ilbilgeulukoy/omics-dataset-curation-and-lab-analysis-tracker.git
+    git clone https://github.com/ilbilgeulukoy/Omics-dataset-curation-and-analysis-tracker.git
 
 Enter the project folder:
 
@@ -185,7 +185,7 @@ Then restart Streamlit.
 For a first demo run:
 
     cd ~/Desktop
-    git clone https://github.com/ilbilgeulukoy/omics-dataset-curation-and-lab-analysis-tracker.git
+    git clone https://github.com/ilbilgeulukoy/Omics-dataset-curation-and-analysis-tracker.git
     cd omics-dataset-curation-and-lab-analysis-tracker
     python3 -m venv .venv
     source .venv/bin/activate
