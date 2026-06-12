@@ -1,0 +1,2 @@
+dataset_id,sample_id,sample_path,metadata_path
+DEMO_SP001,DEMO_SP001_S01,path/to/sample_folder,path/to/metadata.csv

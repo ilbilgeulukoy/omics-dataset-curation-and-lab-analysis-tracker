@@ -189,11 +189,132 @@ with tab_dashboard:
     st.divider()
 
     st.header("Dataset Summary Table")
-    st.dataframe(filtered_df, use_container_width=True)
 
-    st.caption(f"Showing {len(filtered_df)} of {len(df)} datasets after filters.")
+    technology_view = st.selectbox(
+        "Technology view",
+        [
+            "All technologies",
+            "scRNA-seq / single-cell",
+            "Spatial / Visium",
+            "bulk RNA-seq",
+            "simulated transcriptomics",
+        ],
+        key="dataset_summary_technology_view",
+    )
 
-    st.info("Metrics are calculated after applying the filters in the sidebar.")
+    def select_existing_columns(table, columns):
+        return [column for column in columns if column in table.columns]
+
+    if technology_view == "Spatial / Visium":
+        spatial_report_path = "reports/spatial_readiness_summary.csv"
+        spatial_demo_path = "data/mock_spatial_readiness.csv"
+
+        try:
+            spatial_df = pd.read_csv(spatial_report_path)
+            spatial_source = spatial_report_path
+        except FileNotFoundError:
+            try:
+                spatial_df = pd.read_csv(spatial_demo_path)
+                spatial_source = spatial_demo_path
+            except FileNotFoundError:
+                spatial_df = pd.DataFrame()
+                spatial_source = None
+
+        if spatial_df.empty:
+            st.warning("No spatial readiness file found. Expected: reports/spatial_readiness_summary.csv or data/mock_spatial_readiness.csv")
+        else:
+            st.caption(f"Spatial readiness source: {spatial_source}")
+            spatial_columns = select_existing_columns(
+                spatial_df,
+                [
+                    "dataset_id",
+                    "sample_id",
+                    "technology",
+                    "assay_type",
+                    "species",
+                    "tissue",
+                    "disease_context",
+                    "matrix_files_found",
+                    "spatial_folder_found",
+                    "positions_found",
+                    "scalefactors_found",
+                    "image_found",
+                    "metadata_found",
+                    "n_spots",
+                    "n_genes",
+                    "readiness_status",
+                    "clustering_suitability",
+                    "include_for_analysis",
+                    "notes",
+                ],
+            )
+            st.dataframe(spatial_df[spatial_columns], use_container_width=True)
+            st.caption(f"Showing {len(spatial_df)} spatial / Visium samples from the selected readiness source.")
+            st.info("Spatial readiness focuses on matrix files, spatial coordinates, scalefactors, histology images, metadata, and analysis-readiness status.")
+
+    else:
+        summary_df = filtered_df.copy()
+
+        if technology_view == "scRNA-seq / single-cell" and "assay_type" in summary_df.columns:
+            summary_df = summary_df[
+                summary_df["assay_type"].astype(str).str.contains("scrna|single", case=False, na=False)
+            ]
+
+        elif technology_view == "bulk RNA-seq" and "assay_type" in summary_df.columns:
+            summary_df = summary_df[
+                summary_df["assay_type"].astype(str).str.contains("bulk", case=False, na=False)
+            ]
+
+        elif technology_view == "simulated transcriptomics" and "assay_type" in summary_df.columns:
+            summary_df = summary_df[
+                summary_df["assay_type"].astype(str).str.contains("simulated", case=False, na=False)
+            ]
+
+        if technology_view == "All technologies":
+            summary_columns = select_existing_columns(
+                summary_df,
+                [
+                    "dataset_id",
+                    "dataset_name",
+                    "assay_type",
+                    "species",
+                    "disease_area",
+                    "n_patients",
+                    "n_samples",
+                    "n_cells_or_spots",
+                    "n_genes",
+                    "data_level",
+                    "verified",
+                    "include_for_analysis",
+                    "notes",
+                ],
+            )
+        else:
+            summary_columns = select_existing_columns(
+                summary_df,
+                [
+                    "dataset_id",
+                    "dataset_name",
+                    "assay_type",
+                    "species",
+                    "disease_area",
+                    "n_patients",
+                    "n_samples",
+                    "n_cells_or_spots",
+                    "n_genes",
+                    "data_level",
+                    "data_access",
+                    "verified",
+                    "include_for_analysis",
+                    "preprocessing_status",
+                    "qc_report_path",
+                    "notes",
+                ],
+            )
+
+        st.dataframe(summary_df[summary_columns], use_container_width=True)
+        st.caption(f"Showing {len(summary_df)} of {len(df)} datasets for this technology view.")
+        st.info("Metrics are calculated after applying the filters in the sidebar.")
 
     st.divider()
 
@@ -424,6 +545,7 @@ with tab_templates:
         "Sample metadata template": "templates/sample_metadata_template.csv",
         "QC summary template": "templates/qc_summary_template.csv",
         "Sample H5AD paths template": "templates/sample_h5ad_paths_template.csv",
+        "Visium registry template": "templates/visium_registry_template.csv",
     }
 
     for label, file_path in template_files.items():
@@ -455,6 +577,7 @@ data/datasets.csv
 data/sample_metadata.csv
 data/qc_summary.csv
 data/sample_h5ad_paths.csv
+data/visium_registry.csv
         """,
         language="text"
     )
@@ -466,6 +589,18 @@ data/sample_h5ad_paths.csv
     )
 
     st.code("data/sample_h5ad_paths.csv", language="text")
+
+    st.write(
+        """
+        For Spatial / Visium readiness validation, fill the Visium registry template,
+        save it as `data/visium_registry.csv`, then run:
+        """
+    )
+
+    st.code(
+        "python scripts/validate_visium_dataset.py --registry-csv data/visium_registry.csv --output-csv reports/spatial_readiness_summary.csv",
+        language="bash"
+    )
 
     st.info(
         "The template files are small CSV files. Large H5AD, FASTQ, MTX or count matrix files should not be uploaded to GitHub."

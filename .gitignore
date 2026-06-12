@@ -31,3 +31,5 @@ reports/*.png
 lib/
 
 obsidian_vault/
+
+reports/*.csv
